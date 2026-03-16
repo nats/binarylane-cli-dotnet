@@ -17,4 +17,6 @@ public partial class CliJsonContext : JsonSerializerContext;
 
 [JsonSourceGenerationOptions(WriteIndented = true)]
 [JsonSerializable(typeof(JsonElement))]
+[JsonSerializable(typeof(Dictionary<string, string?>))]
+[JsonSerializable(typeof(List<Dictionary<string, object?>>))]
 public partial class CliJsonPrettyContext : JsonSerializerContext;

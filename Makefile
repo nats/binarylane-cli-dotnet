@@ -1,4 +1,4 @@
-PUBLISH_DIR := src/BinaryLane.Cli/bin/Release/net10.0/linux-x64/publish
+PUBLISH_DIR := src/BinaryLane.Cli/bin/Release/net10.0/linux-musl-x64/publish
 INSTALL_DIR := $(HOME)/.local/bin
 
 .PHONY: generate build publish install test clean
@@ -10,7 +10,7 @@ build:
 	dotnet build
 
 publish:
-	dotnet publish src/BinaryLane.Cli -c Release -r linux-x64
+	dotnet publish src/BinaryLane.Cli -c Release
 
 install: publish
 	mkdir -p $(INSTALL_DIR)
