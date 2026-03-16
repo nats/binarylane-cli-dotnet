@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/BinaryLane.Cli.Generator/BinaryLane.Cli.Generator.csproj" />
+    <Project Path="src/BinaryLane.Cli/BinaryLane.Cli.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/BinaryLane.Cli.IntegrationTests/BinaryLane.Cli.IntegrationTests.csproj" />
+    <Project Path="tests/BinaryLane.Cli.Tests/BinaryLane.Cli.Tests.csproj" />
+  </Folder>
+</Solution>
