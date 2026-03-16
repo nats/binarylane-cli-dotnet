@@ -27,7 +27,7 @@ public static class ServerListCommand
             if (hostname != null) queryParts.Add($"hostname={Uri.EscapeDataString(hostname.ToString()!)}");
             var queryString = queryParts.Count > 0 ? "?" + string.Join("&", queryParts) : "";
 
-            string[] defaultFields = ["id", "name", "memory", "vcpus", "disk", "vpc_id"];
+            string[] defaultFields = ["id", "name", "image", "vcpus", "memory", "disk", "region", "networks"];
             var fields = cmdCtx.FormatFields?.Split(',').Select(f => f.Trim()).ToList()
                 ?? defaultFields.ToList();
 

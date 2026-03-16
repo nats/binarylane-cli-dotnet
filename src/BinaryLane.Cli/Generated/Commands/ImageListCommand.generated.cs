@@ -32,7 +32,7 @@ public static class ImageListCommand
             if (@private != null) queryParts.Add($"private={Uri.EscapeDataString(@private.ToString()!)}");
             var queryString = queryParts.Count > 0 ? "?" + string.Join("&", queryParts) : "";
 
-            string[] defaultFields = ["id", "name", "distribution", "full_name", "slug", "public"];
+            string[] defaultFields = ["id", "slug", "distribution", "name"];
             var fields = cmdCtx.FormatFields?.Split(',').Select(f => f.Trim()).ToList()
                 ?? defaultFields.ToList();
 

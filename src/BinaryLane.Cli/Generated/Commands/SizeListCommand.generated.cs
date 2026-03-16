@@ -32,7 +32,7 @@ public static class SizeListCommand
             if (image != null) queryParts.Add($"image={Uri.EscapeDataString(image.ToString()!)}");
             var queryString = queryParts.Count > 0 ? "?" + string.Join("&", queryParts) : "";
 
-            string[] defaultFields = ["slug", "description", "cpu_description", "storage_description", "available", "price_monthly"];
+            string[] defaultFields = ["slug", "size_type", "vcpus", "vcpu_units", "memory", "disk", "transfer", "price_monthly"];
             var fields = cmdCtx.FormatFields?.Split(',').Select(f => f.Trim()).ToList()
                 ?? defaultFields.ToList();
 

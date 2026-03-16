@@ -23,7 +23,7 @@ public static class ServerBackupListCommand
             var cmdCtx = ContextBinder.Bind(parseResult);
             var server_id = parseResult.GetValue(server_idArg)!;
 
-            string[] defaultFields = ["id", "name", "distribution", "full_name", "slug", "public"];
+            string[] defaultFields = ["id", "slug", "distribution", "name"];
             var fields = cmdCtx.FormatFields?.Split(',').Select(f => f.Trim()).ToList()
                 ?? defaultFields.ToList();
 

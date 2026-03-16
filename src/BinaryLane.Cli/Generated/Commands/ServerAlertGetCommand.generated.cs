@@ -23,7 +23,7 @@ public static class ServerAlertGetCommand
             var cmdCtx = ContextBinder.Bind(parseResult);
             var server_id = parseResult.GetValue(server_idArg)!;
 
-            string[] defaultFields = ["enabled", "value", "current_value", "last_raised", "last_cleared"];
+            string[] defaultFields = ["enabled", "value"];
             var fields = cmdCtx.FormatFields?.Split(',').Select(f => f.Trim()).ToList()
                 ?? defaultFields.ToList();
 

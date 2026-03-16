@@ -138,7 +138,9 @@ public abstract class ApiCommandBase
             }
 
             bool hasNext = json.TryGetProperty("links", out var links) &&
+                links.ValueKind == JsonValueKind.Object &&
                 links.TryGetProperty("pages", out var pages) &&
+                pages.ValueKind == JsonValueKind.Object &&
                 pages.TryGetProperty("next", out var next) &&
                 next.ValueKind == JsonValueKind.String;
 

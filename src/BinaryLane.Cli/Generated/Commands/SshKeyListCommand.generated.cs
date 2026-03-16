@@ -19,7 +19,7 @@ public static class SshKeyListCommand
         {
             var cmdCtx = ContextBinder.Bind(parseResult);
 
-            string[] defaultFields = ["id", "fingerprint", "public_key", "name", "default"];
+            string[] defaultFields = ["id", "name", "default", "fingerprint"];
             var fields = cmdCtx.FormatFields?.Split(',').Select(f => f.Trim()).ToList()
                 ?? defaultFields.ToList();
 

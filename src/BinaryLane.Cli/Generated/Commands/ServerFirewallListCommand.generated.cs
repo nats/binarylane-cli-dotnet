@@ -23,7 +23,7 @@ public static class ServerFirewallListCommand
             var cmdCtx = ContextBinder.Bind(parseResult);
             var server_id = parseResult.GetValue(server_idArg)!;
 
-            string[] defaultFields = ["description"];
+            string[] defaultFields = ["source_addresses", "destination_addresses", "protocol", "destination_ports", "action", "description"];
             var fields = cmdCtx.FormatFields?.Split(',').Select(f => f.Trim()).ToList()
                 ?? defaultFields.ToList();
 

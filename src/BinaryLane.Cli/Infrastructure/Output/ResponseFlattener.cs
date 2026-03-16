@@ -27,8 +27,9 @@ public static class ResponseFlattener
             candidate = prop.Value;
         }
 
-        // If there's exactly one non-meta/links property, unwrap it
-        if (propertyCount > 1 && candidate.HasValue)
+        // Unwrap if there's a single interesting property (either the original had
+        // meta/links siblings, or the combined pagination response has just the data)
+        if (candidate.HasValue && (propertyCount > 1 || candidate.Value.ValueKind == JsonValueKind.Array))
             return candidate.Value;
 
         return root;
@@ -111,9 +112,40 @@ public static class ResponseFlattener
             JsonValueKind.False => "No",
             JsonValueKind.Null => null,
             JsonValueKind.Array => FlattenArray(el),
-            JsonValueKind.Object => el.GetRawText(),
+            JsonValueKind.Object => FlattenObject(el),
             _ => el.GetRawText(),
         };
+
+        // Pick the best scalar display value from a nested object.
+        // Matches Python _flatten_dict priority: display_name > full_name > name > slug > id
+        static string FlattenObject(JsonElement obj)
+        {
+            foreach (var candidate in (ReadOnlySpan<string>)["display_name", "full_name", "name", "slug", "id"])
+            {
+                if (obj.TryGetProperty(candidate, out var val) && val.ValueKind is JsonValueKind.String or JsonValueKind.Number)
+                    return FlattenValue(val) ?? "";
+            }
+
+            // Map 'networks' dictionary to first v4 + first v6 ip_address
+            if (obj.TryGetProperty("v4", out var v4) && v4.ValueKind == JsonValueKind.Array &&
+                obj.TryGetProperty("v6", out var v6) && v6.ValueKind == JsonValueKind.Array)
+            {
+                var ips = new List<string>();
+                foreach (var entry in v4.EnumerateArray().Take(1))
+                {
+                    if (entry.TryGetProperty("ip_address", out var ip))
+                        ips.Add(ip.GetString() ?? "");
+                }
+                foreach (var entry in v6.EnumerateArray().Take(1))
+                {
+                    if (entry.TryGetProperty("ip_address", out var ip))
+                        ips.Add(ip.GetString() ?? "");
+                }
+                return string.Join("\n", ips);
+            }
+
+            return "<object>";
+        }
     }
 
     private static string FlattenArray(JsonElement array)

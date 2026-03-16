@@ -19,7 +19,7 @@ public static class ActionListCommand
         {
             var cmdCtx = ContextBinder.Bind(parseResult);
 
-            string[] defaultFields = ["id", "type", "started_at", "completed_at", "resource_id", "region_slug"];
+            string[] defaultFields = ["id", "type", "started_at", "completed_at", "resource_id", "status", "result_data"];
             var fields = cmdCtx.FormatFields?.Split(',').Select(f => f.Trim()).ToList()
                 ?? defaultFields.ToList();
 

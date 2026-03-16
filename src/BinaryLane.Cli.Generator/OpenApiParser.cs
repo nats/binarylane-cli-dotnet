@@ -132,19 +132,34 @@ public static class OpenApiParser
                                         var itemSchema = ResolveSchema(items, schemas);
                                         if (itemSchema.TryGetProperty("properties", out var itemProps))
                                         {
+                                            var formatEntries = new List<(int order, string name)>();
                                             foreach (var itemProp in itemProps.EnumerateObject())
                                             {
                                                 fieldDescriptions[itemProp.Name] = GetDescription(itemProp.Value);
 
-                                                // Select fields for default display (first 6 scalar fields)
-                                                if (defaultFields.Count < 6)
+                                                // Use x-cli-format sort order if present
+                                                if (itemProp.Value.TryGetProperty("x-cli-format", out var fmt) &&
+                                                    fmt.TryGetInt32(out var order))
                                                 {
+                                                    formatEntries.Add((order, itemProp.Name));
+                                                }
+                                            }
+
+                                            if (formatEntries.Count > 0)
+                                            {
+                                                defaultFields.AddRange(formatEntries.OrderBy(e => e.order).Select(e => e.name));
+                                            }
+                                            else
+                                            {
+                                                // Fallback: required primitive fields
+                                                var requiredSet = GetRequiredList(itemSchema);
+                                                foreach (var itemProp in itemProps.EnumerateObject())
+                                                {
+                                                    if (!requiredSet.Contains(itemProp.Name)) continue;
                                                     var fieldResolved = ResolveSchema(itemProp.Value, schemas);
                                                     var fieldType = fieldResolved.TryGetProperty("type", out var ft) ? ft.GetString() : null;
                                                     if (fieldType is "string" or "integer" or "number" or "boolean")
-                                                    {
                                                         defaultFields.Add(itemProp.Name);
-                                                    }
                                                 }
                                             }
                                         }

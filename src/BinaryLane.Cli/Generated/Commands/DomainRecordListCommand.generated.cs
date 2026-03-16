@@ -36,7 +36,7 @@ public static class DomainRecordListCommand
             if (name != null) queryParts.Add($"name={Uri.EscapeDataString(name.ToString()!)}");
             var queryString = queryParts.Count > 0 ? "?" + string.Join("&", queryParts) : "";
 
-            string[] defaultFields = ["id", "name", "data", "priority", "port", "ttl"];
+            string[] defaultFields = ["id", "name", "type", "data"];
             var fields = cmdCtx.FormatFields?.Split(',').Select(f => f.Trim()).ToList()
                 ?? defaultFields.ToList();
 

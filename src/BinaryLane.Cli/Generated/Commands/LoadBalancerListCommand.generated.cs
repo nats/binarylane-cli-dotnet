@@ -19,7 +19,7 @@ public static class LoadBalancerListCommand
         {
             var cmdCtx = ContextBinder.Bind(parseResult);
 
-            string[] defaultFields = ["id", "name", "ip", "created_at"];
+            string[] defaultFields = ["id", "name", "region", "ip"];
             var fields = cmdCtx.FormatFields?.Split(',').Select(f => f.Trim()).ToList()
                 ?? defaultFields.ToList();
 

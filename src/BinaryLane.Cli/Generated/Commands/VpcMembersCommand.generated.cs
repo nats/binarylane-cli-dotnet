@@ -31,7 +31,7 @@ public static class VpcMembersCommand
             if (resource_type != null) queryParts.Add($"resource_type={Uri.EscapeDataString(resource_type.ToString()!)}");
             var queryString = queryParts.Count > 0 ? "?" + string.Join("&", queryParts) : "";
 
-            string[] defaultFields = ["name", "resource_id", "created_at"];
+            string[] defaultFields = ["name", "resource_id"];
             var fields = cmdCtx.FormatFields?.Split(',').Select(f => f.Trim()).ToList()
                 ?? defaultFields.ToList();
 

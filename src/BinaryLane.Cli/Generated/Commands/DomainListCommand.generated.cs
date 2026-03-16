@@ -19,7 +19,7 @@ public static class DomainListCommand
         {
             var cmdCtx = ContextBinder.Bind(parseResult);
 
-            string[] defaultFields = ["id", "name", "ttl", "zone_file"];
+            string[] defaultFields = ["id", "name", "zone_file"];
             var fields = cmdCtx.FormatFields?.Split(',').Select(f => f.Trim()).ToList()
                 ?? defaultFields.ToList();
 

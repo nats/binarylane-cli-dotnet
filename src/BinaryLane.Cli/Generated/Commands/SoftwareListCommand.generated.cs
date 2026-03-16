@@ -19,7 +19,7 @@ public static class SoftwareListCommand
         {
             var cmdCtx = ContextBinder.Bind(parseResult);
 
-            string[] defaultFields = ["id", "enabled", "name", "description", "cost_per_licence_per_month", "minimum_licence_count"];
+            string[] defaultFields = ["id", "name", "description", "cost_per_licence_per_month"];
             var fields = cmdCtx.FormatFields?.Split(',').Select(f => f.Trim()).ToList()
                 ?? defaultFields.ToList();
 

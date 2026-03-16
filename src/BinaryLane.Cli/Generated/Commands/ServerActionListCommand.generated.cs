@@ -23,7 +23,7 @@ public static class ServerActionListCommand
             var cmdCtx = ContextBinder.Bind(parseResult);
             var server_id = parseResult.GetValue(server_idArg)!;
 
-            string[] defaultFields = ["id", "type", "started_at", "completed_at", "resource_id", "region_slug"];
+            string[] defaultFields = ["id", "type", "started_at", "completed_at", "resource_id", "status", "result_data"];
             var fields = cmdCtx.FormatFields?.Split(',').Select(f => f.Trim()).ToList()
                 ?? defaultFields.ToList();
 

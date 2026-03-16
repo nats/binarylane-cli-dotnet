@@ -19,7 +19,7 @@ public static class AccountInvoiceOverdueCommand
         {
             var cmdCtx = ContextBinder.Bind(parseResult);
 
-            string[] defaultFields = ["invoice_id", "reference", "invoice_number", "amount", "tax", "created"];
+            string[] defaultFields = ["invoice_id", "invoice_number", "amount", "tax", "created", "date_due", "date_overdue", "paid", "refunded"];
             var fields = cmdCtx.FormatFields?.Split(',').Select(f => f.Trim()).ToList()
                 ?? defaultFields.ToList();
 

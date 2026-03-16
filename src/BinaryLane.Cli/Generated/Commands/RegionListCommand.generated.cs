@@ -19,7 +19,7 @@ public static class RegionListCommand
         {
             var cmdCtx = ContextBinder.Bind(parseResult);
 
-            string[] defaultFields = ["slug", "name", "available"];
+            string[] defaultFields = ["slug", "name"];
             var fields = cmdCtx.FormatFields?.Split(',').Select(f => f.Trim()).ToList()
                 ?? defaultFields.ToList();
 
