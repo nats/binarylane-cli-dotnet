@@ -1,0 +1,15 @@
+#!/bin/sh
+# Wrapper around musl-gcc that:
+# 1. Strips --target= flags (clang-only, not supported by gcc)
+# 2. Adds -L path to musl-built static OpenSSL if MUSL_SSL_LIB is set
+args=""
+for arg in "$@"; do
+    case "$arg" in
+        --target=*) ;;
+        *) args="$args $arg" ;;
+    esac
+done
+if [ -n "$MUSL_SSL_LIB" ]; then
+    args="-L$MUSL_SSL_LIB $args"
+fi
+exec musl-gcc $args
