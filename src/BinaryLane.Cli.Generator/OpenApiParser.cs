@@ -247,6 +247,8 @@ public static class OpenApiParser
             }
         }
 
+        bool isUnionType = IsUnionIntString(prop.Value, schemas);
+
         return new PropertyInfo
         {
             Name = name,
@@ -257,6 +259,7 @@ public static class OpenApiParser
             EnumValues = enumValues,
             IsArray = isArray,
             ArrayItemType = arrayItemType,
+            IsUnionType = isUnionType,
         };
     }
 
@@ -308,6 +311,28 @@ public static class OpenApiParser
             "array" => ("array", false, null),
             _ => ("string", false, null),
         };
+    }
+
+    private static bool IsUnionIntString(JsonElement schema, JsonElement schemas)
+    {
+        var resolved = ResolveSchema(schema, schemas);
+        foreach (var key in new[] { "oneOf", "anyOf" })
+        {
+            if (!resolved.TryGetProperty(key, out var unionArray)) continue;
+            bool hasString = false, hasInt = false;
+            foreach (var option in unionArray.EnumerateArray())
+            {
+                var optResolved = ResolveSchema(option, schemas);
+                if (optResolved.TryGetProperty("type", out var ot))
+                {
+                    var t = ot.GetString();
+                    if (t == "string") hasString = true;
+                    if (t == "integer") hasInt = true;
+                }
+            }
+            if (hasString && hasInt) return true;
+        }
+        return false;
     }
 
     private static JsonElement ResolveSchema(JsonElement schema, JsonElement schemas)

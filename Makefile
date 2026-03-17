@@ -34,7 +34,7 @@ $(OPENSSL_TARBALL):
 openssl: $(OPENSSL_PREFIX)/lib64/libssl.a
 
 publish: $(OPENSSL_PREFIX)/lib64/libssl.a
-	OPENSSL_ROOT_DIR=$(OPENSSL_PREFIX) MUSL_SSL_LIB=$(OPENSSL_PREFIX)/lib64 dotnet publish src/BinaryLane.Cli -c Release "-p:CppCompilerAndLinker=$(CURDIR)/vendor/musl-gcc-wrapper"
+	OPENSSL_ROOT_DIR=$(OPENSSL_PREFIX) MUSL_SSL_LIB=$(OPENSSL_PREFIX)/lib64 dotnet publish src/BinaryLane.Cli -r linux-musl-x64 -c Release "-p:CppCompilerAndLinker=$(CURDIR)/vendor/musl-gcc-wrapper"
 
 install: publish
 	mkdir -p $(INSTALL_DIR)

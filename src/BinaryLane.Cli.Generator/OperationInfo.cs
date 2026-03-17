@@ -97,4 +97,5 @@ public sealed class PropertyInfo
     public List<string>? EnumValues { get; init; }
     public bool IsArray { get; init; }
     public string? ArrayItemType { get; init; }
+    public bool IsUnionType { get; init; }
 }

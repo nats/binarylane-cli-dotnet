@@ -180,6 +180,8 @@ public static class CommandEmitter
                     sb.AppendLine($"            body[\"{prop.Name}\"] = {varName};");
                 else if (prop.IsArray)
                     sb.AppendLine($"            if ({varName} is {{ Length: > 0 }}) body[\"{prop.Name}\"] = {varName};");
+                else if (prop.IsUnionType)
+                    sb.AppendLine($"            if ({varName} != null) body[\"{prop.Name}\"] = int.TryParse({varName}, out var {varName}Num) ? (object?){varName}Num : {varName};");
                 else
                     sb.AppendLine($"            if ({varName} != null) body[\"{prop.Name}\"] = {varName};");
             }

@@ -30,7 +30,7 @@ public static class ServerActionRestoreCommand
 
             var body = new Dictionary<string, object?>();
             body["type"] = "restore";
-            if (image != null) body["image"] = image;
+            if (image != null) body["image"] = int.TryParse(image, out var imageNum) ? (object?)imageNum : image;
 
             return await ApiCommandBase.ExecuteApiCallAsync(
                 cmdCtx,

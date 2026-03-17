@@ -83,7 +83,7 @@ public static class ServerCreateCommand
             if (backups != null) body["backups"] = backups;
             if (ipv6 != null) body["ipv6"] = ipv6;
             if (size != null) body["size"] = size;
-            if (image != null) body["image"] = image;
+            if (image != null) body["image"] = int.TryParse(image, out var imageNum) ? (object?)imageNum : image;
             if (region != null) body["region"] = region;
             if (vpc_id != null) body["vpc_id"] = vpc_id;
             if (vpc_ipv4_address != null) body["vpc_ipv4_address"] = vpc_ipv4_address;

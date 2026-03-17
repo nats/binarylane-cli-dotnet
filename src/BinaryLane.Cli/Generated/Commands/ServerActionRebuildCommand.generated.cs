@@ -33,7 +33,7 @@ public static class ServerActionRebuildCommand
 
             var body = new Dictionary<string, object?>();
             body["type"] = "rebuild";
-            if (image != null) body["image"] = image;
+            if (image != null) body["image"] = int.TryParse(image, out var imageNum) ? (object?)imageNum : image;
             if (options != null) body["options"] = options;
 
             return await ApiCommandBase.ExecuteApiCallAsync(
