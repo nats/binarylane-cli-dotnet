@@ -5,6 +5,7 @@ build-windows:
     - main
   script:
     - dotnet publish src/BinaryLane.Cli -r win-x64 -c Release
+    - Copy-Item src/BinaryLane.Cli/bin/Release/net10.0/win-x64/publish/bl.exe bl.exe
   artifacts:
     paths:
-      - src/BinaryLane.Cli/bin/Release/net10.0/win-x64/publish/bl.exe
+      - bl.exe
