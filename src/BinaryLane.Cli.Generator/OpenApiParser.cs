@@ -272,32 +272,29 @@ public static class OpenApiParser
 
         var type = resolved.TryGetProperty("type", out var t) ? t.GetString() : null;
 
-        // Handle oneOf with null (nullable)
-        if (resolved.TryGetProperty("oneOf", out var oneOf))
+        // Handle oneOf/anyOf unions
+        foreach (var key in new[] { "oneOf", "anyOf" })
         {
-            foreach (var option in oneOf.EnumerateArray())
+            if (!resolved.TryGetProperty(key, out var unionArray)) continue;
+            var nonNullTypes = new List<string>();
+            foreach (var option in unionArray.EnumerateArray())
             {
                 var optResolved = ResolveSchema(option, schemas);
-                if (optResolved.TryGetProperty("type", out var ot) && ot.GetString() != "null")
-                {
-                    var (innerType, isEnum, enumValues) = GetTypeInfo(option, schemas);
-                    return (innerType, isEnum, enumValues);
-                }
+                if (optResolved.TryGetProperty("type", out var ot) && ot.GetString() is string optType && optType != "null")
+                    nonNullTypes.Add(optType);
             }
-        }
-
-        // Handle anyOf similarly
-        if (resolved.TryGetProperty("anyOf", out var anyOf))
-        {
-            foreach (var option in anyOf.EnumerateArray())
+            if (nonNullTypes.Count == 0) continue;
+            // If union includes string (e.g. Union[int,str]), use string to accept both
+            if (nonNullTypes.Contains("string"))
+                return ("string", false, null);
+            // Otherwise use the first non-null type
+            return (nonNullTypes[0] switch
             {
-                var optResolved = ResolveSchema(option, schemas);
-                if (optResolved.TryGetProperty("type", out var ot) && ot.GetString() != "null")
-                {
-                    var (innerType, isEnum, enumValues) = GetTypeInfo(option, schemas);
-                    return (innerType, isEnum, enumValues);
-                }
-            }
+                "integer" => "int",
+                "number" => "double",
+                "boolean" => "bool",
+                _ => "string",
+            }, false, null);
         }
 
         return type switch
