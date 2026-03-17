@@ -162,12 +162,82 @@ For each operation, generate a static class with `Create()` method:
 - `ServerActionCurlTests` — verify discriminator auto-set for 5 action commands
 - `OutputComparisonTests` — run both CLIs with `--output tsv`, compare stdout for list commands with default and custom `--format`
 
-## Key Gotchas Encountered
+## Lessons Learned / What To Do Differently
 
-1. **System.CommandLine 2.0 API** — completely different from beta. `SetAction` not `SetHandler`, `Options.Add` not `AddOption`, `ParseResult.GetValue` not `GetValueForOption`, no `InvocationContext`
-2. **C# keywords as identifiers** — `private`, `type` etc. from OpenAPI property names need `@` prefix
-3. **allOf in OpenAPI** — body schemas use `allOf` with `$ref`, not direct `$ref`
-4. **Pagination with null links** — API returns `"links": null` not missing `links`, must check `ValueKind == Object` before traversing
-5. **ExtractPrimary** — combined pagination response has only the data property (no meta/links), must unwrap single-property objects when the value is an array
-6. **PublishTrimmed + JSON** — `PostAsJsonAsync`/`JsonSerializer.Serialize` need reflection. Use source-generated `CliJsonContext` and manual `StringContent` serialization
-7. **NativeAOT musl** — needs musl-built static OpenSSL. System headers via `-idirafter` to avoid glibc conflicts. `--target=` flag must be stripped for gcc (clang-only). `-lssl -lcrypto` need `-L` to find musl-built libs
+These are mistakes made during the initial implementation that wasted significant
+time. Follow this order if repeating the build.
+
+### 1. Research System.CommandLine API first
+
+The current stable release (2.0.5) has a completely different API from the beta
+versions in LLM training data. Read the official tutorial at
+`https://learn.microsoft.com/en-us/dotnet/standard/commandline/get-started-tutorial`
+before writing any code. Key differences:
+
+- `SetAction(parseResult => ...)` not `SetHandler(ctx => ...)`
+- `command.Options.Add()` not `command.AddOption()`
+- `command.Arguments.Add()` not `command.AddArgument()`
+- `command.Subcommands.Add()` not `command.AddCommand()`
+- `parseResult.GetValue(option)` not `ctx.ParseResult.GetValueForOption(option)`
+- `Option<T>` constructor: `new("--name") { Description = "..." }` (object initializer)
+- `option.Recursive = true` for global options (not `AddGlobalOption`)
+- No `InvocationContext` class — actions receive `ParseResult` directly
+- `option.AcceptOnlyFromAmong()` not `option.FromAmong()`
+
+### 2. Create integration test harness first
+
+Before implementing any functionality, set up the integration test harness that
+runs both `bl` (blpy) and `blnet` and compares outputs. Then use red/green/refactor
+to drive implementation. This catches compatibility issues immediately instead of
+discovering them after building large amounts of code.
+
+### 3. Inspect OpenAPI spec for all x-cli-* extensions
+
+Scan the entire spec for custom extensions before starting the generator. Don't
+assume the command name is the only extension. The spec contains:
+
+- `x-cli-command` — command tree path (on operations)
+- `x-cli-format` — display field sort order (on schema properties)
+- `x-cli-entity-lookup` — name→ID resolution command (on parameters)
+- `x-cli-entity-list` — list command for entity lookup (on parameters)
+- `x-cli-entity-ref` — field to match for lookup (on parameters)
+- URL fragment `#PowerOn` — discriminator for polymorphic action bodies
+
+Missing `x-cli-format` caused wrong default column order. Missing fragment
+handling caused required `--type` option that blpy auto-sets.
+
+### 4. Avoid language keyword collisions in code generation
+
+OpenAPI property names like `private`, `type`, `class` etc. generate invalid C#
+identifiers. Build a keyword set and prefix with `@` (e.g. `@private`, `@type`)
+from the start. This affected variable names, option names, and argument names
+in generated code.
+
+### 5. Replicate blpy's object formatting exactly
+
+Read `src/binarylane/console/printers/formatter.py` carefully — specifically the
+`_flatten_dict` function. Nested objects (image, region, networks, size_type) are
+flattened to scalar display values with specific priority:
+
+```python
+for key in ("display_name", "full_name", "name", "slug", "id"):
+    if key in item:
+        return item[key]
+```
+
+Networks is a special case: `v4[:1] + v6[:1]` ip_addresses, newline-joined.
+Fallback is `<object>` (not raw JSON). Getting this wrong means every list
+command produces different output from blpy.
+
+### 6. Handle OpenAPI schema composition (allOf)
+
+Many request body schemas use `allOf` with `$ref` rather than direct `$ref`.
+The schema resolver must traverse `allOf` arrays to find the actual schema
+with properties.
+
+## Additional Gotchas
+
+1. **Pagination with null links** — API returns `"links": null` not missing `links`, must check `ValueKind == Object` before traversing
+2. **ExtractPrimary** — combined pagination response has only the data property (no meta/links), must unwrap single-property objects when the value is an array
+3. **PublishTrimmed + JSON** — `PostAsJsonAsync`/`JsonSerializer.Serialize` need reflection. Use source-generated `CliJsonContext` and manual `StringContent` serialization
+4. **NativeAOT musl** — needs musl-built static OpenSSL. System headers via `-idirafter` to avoid glibc conflicts. `--target=` flag must be stripped for gcc (clang-only). `-lssl -lcrypto` need `-L` to find musl-built libs
