@@ -1,0 +1,74 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            rid: linux-musl-x64
+            artifact: bl-linux-x64
+            binary: bl
+          - os: windows-latest
+            rid: win-x64
+            artifact: bl-windows-x64
+            binary: bl.exe
+          - os: macos-latest
+            rid: osx-arm64
+            artifact: bl-macos-arm64
+            binary: bl
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      # Linux: fully static binary via musl + static OpenSSL
+      - name: Install musl-tools
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y musl-tools
+
+      - name: Cache static OpenSSL
+        if: runner.os == 'Linux'
+        id: cache-openssl
+        uses: actions/cache@v4
+        with:
+          path: vendor/musl-ssl
+          key: openssl-3.0.13-musl-static
+
+      - name: Build static OpenSSL
+        if: runner.os == 'Linux' && steps.cache-openssl.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p vendor
+          curl -sL https://github.com/openssl/openssl/releases/download/openssl-3.0.13/openssl-3.0.13.tar.gz -o vendor/openssl-3.0.13.tar.gz
+          tar xzf vendor/openssl-3.0.13.tar.gz -C vendor
+          cd vendor/openssl-3.0.13
+          KERNEL_FLAGS="-idirafter /usr/include -idirafter /usr/include/x86_64-linux-gnu"
+          CC=musl-gcc CFLAGS="$KERNEL_FLAGS" ./Configure linux-x86_64 no-shared no-async no-tests --prefix=$GITHUB_WORKSPACE/vendor/musl-ssl
+          make -j$(nproc) CNF_CFLAGS="$KERNEL_FLAGS"
+          make install_sw
+
+      - name: Publish (Linux)
+        if: runner.os == 'Linux'
+        run: >
+          OPENSSL_ROOT_DIR=$GITHUB_WORKSPACE/vendor/musl-ssl
+          MUSL_SSL_LIB=$GITHUB_WORKSPACE/vendor/musl-ssl/lib64
+          dotnet publish src/BinaryLane.Cli -r linux-musl-x64 -c Release
+          "-p:CppCompilerAndLinker=$GITHUB_WORKSPACE/vendor/musl-gcc-wrapper"
+
+      - name: Publish (Windows/macOS)
+        if: runner.os != 'Linux'
+        run: dotnet publish src/BinaryLane.Cli -r ${{ matrix.rid }} -c Release
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: src/BinaryLane.Cli/bin/Release/net10.0/${{ matrix.rid }}/publish/${{ matrix.binary }}
