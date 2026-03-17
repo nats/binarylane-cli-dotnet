@@ -25,7 +25,7 @@ public static class ServerIpv6PtrNsUpdateCommand
             var reverse_nameservers = parseResult.GetValue(reverse_nameserversOpt);
 
             var body = new Dictionary<string, object?>();
-            if (reverse_nameservers != null) body["reverse_nameservers"] = reverse_nameservers;
+            if (reverse_nameservers is { Length: > 0 }) body["reverse_nameservers"] = reverse_nameservers;
 
             return await ApiCommandBase.ExecuteApiCallAsync(
                 cmdCtx,

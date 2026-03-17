@@ -28,7 +28,7 @@ public static class ServerCreateCommand
         sizeOpt.Required = true;
         command.Options.Add(sizeOpt);
 
-        var imageOpt = new Option<int>("--image") { Description = "The slug or id of the selected operating system." };
+        var imageOpt = new Option<string>("--image") { Description = "The slug or id of the selected operating system." };
         imageOpt.Required = true;
         command.Options.Add(imageOpt);
 
@@ -83,13 +83,13 @@ public static class ServerCreateCommand
             if (backups != null) body["backups"] = backups;
             if (ipv6 != null) body["ipv6"] = ipv6;
             if (size != null) body["size"] = size;
-            body["image"] = image;
+            if (image != null) body["image"] = image;
             if (region != null) body["region"] = region;
             if (vpc_id != null) body["vpc_id"] = vpc_id;
             if (vpc_ipv4_address != null) body["vpc_ipv4_address"] = vpc_ipv4_address;
-            if (ssh_keys != null) body["ssh_keys"] = ssh_keys;
+            if (ssh_keys is { Length: > 0 }) body["ssh_keys"] = ssh_keys;
             if (options != null) body["options"] = options;
-            if (licenses != null) body["licenses"] = licenses;
+            if (licenses is { Length: > 0 }) body["licenses"] = licenses;
             if (user_data != null) body["user_data"] = user_data;
             if (port_blocking != null) body["port_blocking"] = port_blocking;
             if (password != null) body["password"] = password;

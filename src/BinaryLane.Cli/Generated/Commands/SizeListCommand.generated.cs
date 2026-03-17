@@ -18,7 +18,7 @@ public static class SizeListCommand
         var server_idOpt = new Option<int?>("--server-id") { Description = "If supplied only sizes available for a resize the specified server will be returned. This parameter is only available when authenticated." };
         command.Options.Add(server_idOpt);
 
-        var imageOpt = new Option<int?>("--image") { Description = "If null or not provided regions that support the size are included in the returned objects regardless of operating system. If this is provided it must be the id or slug of an operating system image and will cause only valid regions for the size and operating system to be included in the returned objects." };
+        var imageOpt = new Option<string?>("--image") { Description = "If null or not provided regions that support the size are included in the returned objects regardless of operating system. If this is provided it must be the id or slug of an operating system image and will cause only valid regions for the size and operating system to be included in the returned objects." };
         command.Options.Add(imageOpt);
 
         command.SetAction(async (parseResult, ct) =>

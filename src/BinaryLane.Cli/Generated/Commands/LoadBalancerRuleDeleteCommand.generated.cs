@@ -29,7 +29,7 @@ public static class LoadBalancerRuleDeleteCommand
             var forwarding_rules = parseResult.GetValue(forwarding_rulesOpt);
 
             var body = new Dictionary<string, object?>();
-            if (forwarding_rules != null) body["forwarding_rules"] = forwarding_rules;
+            if (forwarding_rules is { Length: > 0 }) body["forwarding_rules"] = forwarding_rules;
 
             return await ApiCommandBase.ExecuteApiCallAsync(
                 cmdCtx,

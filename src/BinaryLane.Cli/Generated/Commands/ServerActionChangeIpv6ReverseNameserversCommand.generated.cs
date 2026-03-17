@@ -30,7 +30,7 @@ public static class ServerActionChangeIpv6ReverseNameserversCommand
 
             var body = new Dictionary<string, object?>();
             body["type"] = "change_ipv6_reverse_nameservers";
-            if (ipv6_reverse_nameservers != null) body["ipv6_reverse_nameservers"] = ipv6_reverse_nameservers;
+            if (ipv6_reverse_nameservers is { Length: > 0 }) body["ipv6_reverse_nameservers"] = ipv6_reverse_nameservers;
 
             return await ApiCommandBase.ExecuteApiCallAsync(
                 cmdCtx,

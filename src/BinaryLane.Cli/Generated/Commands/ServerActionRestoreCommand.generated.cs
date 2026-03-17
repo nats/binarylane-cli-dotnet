@@ -18,7 +18,7 @@ public static class ServerActionRestoreCommand
         var server_idArg = new Argument<string>("server_id") { Description = "The ID of the server on which the action should be performed." };
         command.Arguments.Add(server_idArg);
 
-        var imageOpt = new Option<int>("--image") { Description = "The ID of the specific backup to use. Snapshots are not currently supported." };
+        var imageOpt = new Option<string>("--image") { Description = "The ID of the specific backup to use. Snapshots are not currently supported." };
         imageOpt.Required = true;
         command.Options.Add(imageOpt);
 
@@ -30,7 +30,7 @@ public static class ServerActionRestoreCommand
 
             var body = new Dictionary<string, object?>();
             body["type"] = "restore";
-            body["image"] = image;
+            if (image != null) body["image"] = image;
 
             return await ApiCommandBase.ExecuteApiCallAsync(
                 cmdCtx,

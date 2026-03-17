@@ -42,9 +42,9 @@ public static class LoadBalancerUpdateCommand
 
             var body = new Dictionary<string, object?>();
             if (name != null) body["name"] = name;
-            if (forwarding_rules != null) body["forwarding_rules"] = forwarding_rules;
+            if (forwarding_rules is { Length: > 0 }) body["forwarding_rules"] = forwarding_rules;
             if (health_check != null) body["health_check"] = health_check;
-            if (server_ids != null) body["server_ids"] = server_ids;
+            if (server_ids is { Length: > 0 }) body["server_ids"] = server_ids;
 
             return await ApiCommandBase.ExecuteApiCallAsync(
                 cmdCtx,

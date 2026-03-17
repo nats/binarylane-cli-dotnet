@@ -30,7 +30,7 @@ public static class ServerActionChangeAdvancedFirewallRulesCommand
 
             var body = new Dictionary<string, object?>();
             body["type"] = "change_advanced_firewall_rules";
-            if (firewall_rules != null) body["firewall_rules"] = firewall_rules;
+            if (firewall_rules is { Length: > 0 }) body["firewall_rules"] = firewall_rules;
 
             return await ApiCommandBase.ExecuteApiCallAsync(
                 cmdCtx,

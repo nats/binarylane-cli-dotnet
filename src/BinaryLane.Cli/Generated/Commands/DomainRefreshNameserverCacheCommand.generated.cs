@@ -25,7 +25,7 @@ public static class DomainRefreshNameserverCacheCommand
             var domain_names = parseResult.GetValue(domain_namesOpt);
 
             var body = new Dictionary<string, object?>();
-            if (domain_names != null) body["domain_names"] = domain_names;
+            if (domain_names is { Length: > 0 }) body["domain_names"] = domain_names;
 
             return await ApiCommandBase.ExecuteApiCallAsync(
                 cmdCtx,

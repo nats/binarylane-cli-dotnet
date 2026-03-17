@@ -29,7 +29,7 @@ public static class LoadBalancerServerCreateCommand
             var server_ids = parseResult.GetValue(server_idsOpt);
 
             var body = new Dictionary<string, object?>();
-            if (server_ids != null) body["server_ids"] = server_ids;
+            if (server_ids is { Length: > 0 }) body["server_ids"] = server_ids;
 
             return await ApiCommandBase.ExecuteApiCallAsync(
                 cmdCtx,

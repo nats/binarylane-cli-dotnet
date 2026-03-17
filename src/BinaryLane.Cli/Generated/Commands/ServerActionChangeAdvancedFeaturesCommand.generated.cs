@@ -49,7 +49,7 @@ public static class ServerActionChangeAdvancedFeaturesCommand
 
             var body = new Dictionary<string, object?>();
             body["type"] = "change_advanced_features";
-            if (enabled_advanced_features != null) body["enabled_advanced_features"] = enabled_advanced_features;
+            if (enabled_advanced_features is { Length: > 0 }) body["enabled_advanced_features"] = enabled_advanced_features;
             if (processor_model != null) body["processor_model"] = processor_model;
             if (automatic_processor_model != null) body["automatic_processor_model"] = automatic_processor_model;
             if (machine_type != null) body["machine_type"] = machine_type;

@@ -30,7 +30,7 @@ public static class ServerActionChangeThresholdAlertsCommand
 
             var body = new Dictionary<string, object?>();
             body["type"] = "change_threshold_alerts";
-            if (threshold_alerts != null) body["threshold_alerts"] = threshold_alerts;
+            if (threshold_alerts is { Length: > 0 }) body["threshold_alerts"] = threshold_alerts;
 
             return await ApiCommandBase.ExecuteApiCallAsync(
                 cmdCtx,

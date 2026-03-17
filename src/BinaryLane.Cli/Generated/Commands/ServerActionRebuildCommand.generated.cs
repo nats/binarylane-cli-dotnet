@@ -18,7 +18,7 @@ public static class ServerActionRebuildCommand
         var server_idArg = new Argument<string>("server_id") { Description = "The ID of the server on which the action should be performed." };
         command.Arguments.Add(server_idArg);
 
-        var imageOpt = new Option<int?>("--image") { Description = "The Operating System ID or slug or Backup image ID to use as a base for the rebuild." };
+        var imageOpt = new Option<string?>("--image") { Description = "The Operating System ID or slug or Backup image ID to use as a base for the rebuild." };
         command.Options.Add(imageOpt);
 
         var optionsOpt = new Option<string?>("--options") { Description = "Additional options. Leaving this entirely null or any of the properties included null will use the defaults from the existing server." };

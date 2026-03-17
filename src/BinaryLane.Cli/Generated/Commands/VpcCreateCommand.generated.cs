@@ -34,7 +34,7 @@ public static class VpcCreateCommand
 
             var body = new Dictionary<string, object?>();
             if (name != null) body["name"] = name;
-            if (route_entries != null) body["route_entries"] = route_entries;
+            if (route_entries is { Length: > 0 }) body["route_entries"] = route_entries;
             if (ip_range != null) body["ip_range"] = ip_range;
 
             return await ApiCommandBase.ExecuteApiCallAsync(
