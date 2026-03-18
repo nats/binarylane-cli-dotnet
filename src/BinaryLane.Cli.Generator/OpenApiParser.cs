@@ -247,7 +247,9 @@ public static class OpenApiParser
             }
         }
 
-        bool isUnionType = IsUnionIntString(prop.Value, schemas);
+        bool isUnionType = isArray
+            ? resolved.TryGetProperty("items", out var arrayItems) && IsUnionIntString(arrayItems, schemas)
+            : IsUnionIntString(prop.Value, schemas);
 
         return new PropertyInfo
         {

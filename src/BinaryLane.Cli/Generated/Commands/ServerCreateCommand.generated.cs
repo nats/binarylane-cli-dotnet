@@ -87,7 +87,7 @@ public static class ServerCreateCommand
             if (region != null) body["region"] = region;
             if (vpc_id != null) body["vpc_id"] = vpc_id;
             if (vpc_ipv4_address != null) body["vpc_ipv4_address"] = vpc_ipv4_address;
-            if (ssh_keys is { Length: > 0 }) body["ssh_keys"] = ssh_keys;
+            if (ssh_keys is { Length: > 0 }) body["ssh_keys"] = ssh_keys.Select(v => int.TryParse(v, out var n) ? (object)n : v).ToArray();
             if (options != null) body["options"] = options;
             if (licenses is { Length: > 0 }) body["licenses"] = licenses;
             if (user_data != null) body["user_data"] = user_data;

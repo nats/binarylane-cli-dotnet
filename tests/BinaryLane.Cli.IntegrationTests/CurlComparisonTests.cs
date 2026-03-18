@@ -173,6 +173,8 @@ public partial class CurlComparisonTests
         new[] { "server", "action", "uncancel", "12345" },
         new[] { "server", "action", "uptime", "12345" },
 
+        new[] { "server", "create", "--size", "std-min", "--image", "1", "--region", "syd", "--ssh-keys", "123", "abc" },
+
         // TODO: implement +item list syntax for +license
         // new[] { "server", "create", "--size", "std-min", "--image", "1", "--region", "syd",
         //         "--name", "test-server", "--ipv6", "--vpc", "12345", "--ssh-keys", "1", "2",

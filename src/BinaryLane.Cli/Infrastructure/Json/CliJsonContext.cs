@@ -12,6 +12,7 @@ namespace BinaryLane.Cli.Infrastructure.Json;
 [JsonSerializable(typeof(double))]
 [JsonSerializable(typeof(bool))]
 [JsonSerializable(typeof(string[]))]
+[JsonSerializable(typeof(object[]))]
 [JsonSourceGenerationOptions(WriteIndented = false)]
 public partial class CliJsonContext : JsonSerializerContext;
 

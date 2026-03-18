@@ -178,6 +178,8 @@ public static class CommandEmitter
                 bool isValueType = prop.Type is "int" or "double" or "bool" or "DateTime";
                 if (prop.Required && isValueType)
                     sb.AppendLine($"            body[\"{prop.Name}\"] = {varName};");
+                else if (prop.IsArray && prop.IsUnionType)
+                    sb.AppendLine($"            if ({varName} is {{ Length: > 0 }}) body[\"{prop.Name}\"] = {varName}.Select(v => int.TryParse(v, out var n) ? (object)n : v).ToArray();");
                 else if (prop.IsArray)
                     sb.AppendLine($"            if ({varName} is {{ Length: > 0 }}) body[\"{prop.Name}\"] = {varName};");
                 else if (prop.IsUnionType)
