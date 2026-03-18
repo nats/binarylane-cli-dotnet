@@ -5,3 +5,4 @@ obj/
 *.suo
 vendor/openssl-*/
 vendor/musl-ssl/
+CLAUDE.local.md
