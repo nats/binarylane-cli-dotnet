@@ -62,6 +62,8 @@ Not yet consumed (lookup/autocomplete feature):
 
 ## Compatibility with Python CLI (blpy)
 
+blpy is always correct. When identifying a functional difference in blnet, change blnet to match blpy's behavior.
+
 Must match exactly:
 - Command tree and option names (driven by `x-cli-command`)
 - Environment variables: `BL_API_TOKEN`, `BL_API_URL`, `BL_API_DEVELOPMENT`, `BL_CONTEXT`

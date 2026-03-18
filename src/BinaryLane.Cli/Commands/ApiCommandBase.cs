@@ -149,10 +149,13 @@ public abstract class ApiCommandBase
 
         if (primaryKey != null)
         {
-            var combined = new Dictionary<string, object>
+            // Preserve all envelope properties (meta, links, etc.) from the last response,
+            // replacing only the data array with the accumulated items from all pages.
+            var combined = new Dictionary<string, object>();
+            foreach (var prop in lastResponse.EnumerateObject())
             {
-                [primaryKey] = allItems
-            };
+                combined[prop.Name] = prop.Name == primaryKey ? (object)allItems : prop.Value;
+            }
             var combinedJson = JsonSerializer.Serialize(combined, CliJsonContext.Default.DictionaryStringObject);
             return new HttpResponseMessage(HttpStatusCode.OK)
             {
