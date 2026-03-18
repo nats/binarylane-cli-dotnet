@@ -12,4 +12,4 @@ done
 if [ -n "$MUSL_SSL_LIB" ]; then
     args="-L$MUSL_SSL_LIB $args"
 fi
-exec musl-gcc $args
+exec musl-gcc -Wl,-z,noexecstack $args

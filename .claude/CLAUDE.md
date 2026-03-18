@@ -1,3 +1,12 @@
+## Learn Directive
+
+User input beginning with `learn:` is a directive to update this file to include the information provided. `learn: session` is a directive to update this file with new learnings made during the session.
+
+## Development Process
+
+- All functional changes via red/green/refactor: write a failing test first, make it pass, then refactor.
+- When fixing something, consider whether the fix needs to be lifted up and applied more broadly across the codebase.
+
 # BinaryLane CLI (.NET)
 
 .NET 10 drop-in replacement for the Python BinaryLane CLI (`bl`).
